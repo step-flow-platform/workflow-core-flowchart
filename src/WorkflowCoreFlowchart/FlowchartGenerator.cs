@@ -1,3 +1,5 @@
+using System.Linq.Expressions;
+using System.Reflection;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 using WorkflowCore.Primitives;
@@ -17,24 +19,48 @@ public class FlowchartGenerator
     {
         foreach (WorkflowStep step in definition.Steps)
         {
-            if (step is EndStep)
+            string? outcomeTitle = null;
+            switch (step)
             {
-                _nodes.Add(new NodeModel(step.Id.ToString(), "End", NodeType.Circle));
-                continue;
+                case EndStep:
+                    _nodes.Add(new NodeModel(step.Id.ToString(), "End", NodeType.Circle));
+                    continue;
+                case WorkflowStep<If>:
+                    ProcessIfStep(step);
+                    outcomeTitle = "false";
+                    break;
+                default:
+                    _nodes.Add(new NodeModel(step.Id.ToString(), step.Name, NodeType.Default));
+                    break;
             }
 
-            _nodes.Add(new NodeModel(step.Id.ToString(), step.Name, NodeType.Default));
-
-            foreach (IStepOutcome outcome in step.Outcomes)
+            if (step.Outcomes.Any())
             {
-                _directions.Add(new(step.Id.ToString(), outcome.NextStep.ToString(), null));
+                foreach (IStepOutcome outcome in step.Outcomes)
+                {
+                    _directions.Add(new(step.Id.ToString(), outcome.NextStep.ToString(), outcomeTitle));
+                }
+            }
+            else if (_lastTargetNodeId is not null)
+            {
+                _directions.Add(new(step.Id.ToString(), _lastTargetNodeId, outcomeTitle));
             }
 
             foreach (int childId in step.Children)
             {
-                _directions.Add(new(step.Id.ToString(), childId.ToString(), null));
+                _directions.Add(new(step.Id.ToString(), childId.ToString(), "true"));
             }
         }
+    }
+
+    private void ProcessIfStep(WorkflowStep step)
+    {
+        Type type = typeof(MemberMapParameter);
+        FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
+        LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
+        string condition = $"\"{value?.Body.ToString() ?? "-"}\"";
+        _nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
+        _lastTargetNodeId = step.Outcomes[0].NextStep.ToString();
     }
 
     /*private void ProcessStepNode(WorkflowNode node)
@@ -93,4 +119,5 @@ public class FlowchartGenerator
 
     private readonly List<NodeModel> _nodes = new();
     private readonly List<NodesDirectionModel> _directions = new();
+    private string? _lastTargetNodeId;
 }

@@ -10,10 +10,10 @@ public class UseCases
     [TestMethod]
     public void GenerateAndRenderFlowchart()
     {
-        LinearWorkflow workflow = new();
-        WorkflowBuilder<object> workflowBuilder = new(Array.Empty<WorkflowStep>());
+        IfWorkflow workflow = new();
+        WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
         workflow.Build(workflowBuilder);
-        WorkflowDefinition definition = workflowBuilder.Build("LinearWorkflow", 1);
+        WorkflowDefinition definition = workflowBuilder.Build("IfWorkflow", 1);
 
         FlowchartGenerator generator = new();
         FlowchartRenderer renderer = new();
