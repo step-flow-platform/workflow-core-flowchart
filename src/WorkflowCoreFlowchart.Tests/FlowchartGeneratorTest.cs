@@ -74,8 +74,6 @@ public class FlowchartGeneratorTest
         workflow.Build(workflowBuilder);
         WorkflowDefinition definition = workflowBuilder.Build("NestedIfWorkflow2", 1);
 
-        string printedDefinition = WorkflowDefinitionPrinter.Print(definition);
-
         FlowchartGenerator generator = new();
         FlowchartModel flowchartModel = generator.Generate(definition);
 
