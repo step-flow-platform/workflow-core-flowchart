@@ -10,16 +10,18 @@ public class UseCases
     [TestMethod]
     public void GenerateAndRenderFlowchart()
     {
-        IfWorkflow workflow = new();
+        NestedIfWorkflow2 workflow = new();
         WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
         workflow.Build(workflowBuilder);
-        WorkflowDefinition definition = workflowBuilder.Build("IfWorkflow", 1);
+        WorkflowDefinition definition = workflowBuilder.Build("0", 1);
+        string printedDefinition = WorkflowDefinitionPrinter.Print(definition);
 
         FlowchartGenerator generator = new();
         FlowchartRenderer renderer = new();
         FlowchartModel flowchartModel = generator.Generate(definition);
         string flowchart = renderer.Render(flowchartModel);
 
+        Assert.IsFalse(string.IsNullOrEmpty(printedDefinition));
         Assert.IsFalse(string.IsNullOrEmpty(flowchart));
     }
 }
