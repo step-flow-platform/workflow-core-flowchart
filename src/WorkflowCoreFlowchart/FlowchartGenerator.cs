@@ -26,6 +26,9 @@ public class FlowchartGenerator
                 case WorkflowStep<If>:
                     ProcessIfStep(step);
                     break;
+                case WorkflowStep<While>:
+                    ProcessWhileStep(step);
+                    break;
                 default:
                     ProcessStep(step);
                     break;
@@ -39,7 +42,7 @@ public class FlowchartGenerator
         switch (step.Outcomes.Count)
         {
             case 0:
-                _directions.Add(new(step.Id.ToString(), (step.Id + 1).ToString(), null));
+                _directions.Add(new(step.Id.ToString(), _stack.Pop(), null));
                 break;
             case 1:
                 _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), null));
@@ -51,25 +54,17 @@ public class FlowchartGenerator
 
     private void ProcessIfStep(WorkflowStep step)
     {
-        Type type = typeof(MemberMapParameter);
-        FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
-        LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
-        string condition = $"\"{value?.Body.ToString() ?? "-"}\"";
+        string condition = ExtractCondition(step);
         _nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
 
         switch (step.Outcomes.Count)
         {
             case 0:
-                if (_lastTargetNodeId is null)
-                {
-                    throw new ApplicationException("Unexpected step outcomes");
-                }
-
-                _directions.Add(new(step.Id.ToString(), _lastTargetNodeId, "false"));
+                _directions.Add(new(step.Id.ToString(), _stack.Peek(), "false"));
                 break;
             case 1:
                 _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), "false"));
-                _lastTargetNodeId = step.Outcomes[0].NextStep.ToString();
+                _stack.Push(step.Outcomes[0].NextStep.ToString());
                 break;
             default:
                 throw new ApplicationException("Unexpected step outcomes");
@@ -79,6 +74,38 @@ public class FlowchartGenerator
         {
             _directions.Add(new(step.Id.ToString(), childId.ToString(), "true"));
         }
+    }
+
+    private void ProcessWhileStep(WorkflowStep step)
+    {
+        string condition = ExtractCondition(step);
+        _nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
+
+        switch (step.Outcomes.Count)
+        {
+            case 0:
+                _directions.Add(new(step.Id.ToString(), _stack.Peek(), null));
+                break;
+            case 1:
+                _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), null));
+                _stack.Push(step.Id.ToString());
+                break;
+            default:
+                throw new ApplicationException("Unexpected step outcomes");
+        }
+
+        foreach (int childId in step.Children)
+        {
+            _directions.Add(new(step.Id.ToString(), childId.ToString(), null));
+        }
+    }
+
+    private string ExtractCondition(WorkflowStep step)
+    {
+        Type type = typeof(MemberMapParameter);
+        FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
+        LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
+        return $"\"{value?.Body.ToString() ?? "-"}\"";
     }
 
     private void AddStartNode()
@@ -95,5 +122,5 @@ public class FlowchartGenerator
 
     private readonly List<NodeModel> _nodes = new();
     private readonly List<NodesDirectionModel> _directions = new();
-    private string? _lastTargetNodeId;
+    private Stack<string> _stack = new();
 }
