@@ -39,16 +39,14 @@ public class FlowchartGenerator
     private void ProcessStep(WorkflowStep step)
     {
         _nodes.Add(new NodeModel(step.Id.ToString(), step.Name, NodeType.Default));
-        switch (step.Outcomes.Count)
+
+        if (step.Outcomes.Count == 0)
         {
-            case 0:
-                _directions.Add(new(step.Id.ToString(), _stack.Pop(), null));
-                break;
-            case 1:
-                _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), null));
-                break;
-            default:
-                throw new ApplicationException("Unexpected step outcomes");
+            _directions.Add(new(step.Id.ToString(), _stack.Pop(), null));
+        }
+        else
+        {
+            _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), null));
         }
     }
 

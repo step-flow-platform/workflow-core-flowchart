@@ -2,20 +2,25 @@
 flowchart TB
 startNode((Start))
 0[StepA]
-1{"(data.Param1 > 10)"}
-2[StepA]
-3[StepB]
-4{"(data.Param1 > 20)"}
-5[StepB]
-6((End))
+1{"(data.Param1 > 96)"}
+2[StepB]
+3{"(data.Param1 > 144)"}
+4[StepC]
+5[StepA]
+6{"(data.Param1 > 962)"}
+7[StepB]
+8((End))
 
 startNode --> 0
 0 --> 1
-1 --> 6
-1 --> 2
+1 -->|false| 5
+1 -->|true| 2
 2 --> 3
-3 --> 4
-4 -->|false| 1
-4 -->|true| 5
-5 --> 1
+3 -->|false| 5
+3 -->|true| 4
+4 --> 5
+5 --> 6
+6 -->|false| 8
+6 -->|true| 7
+7 --> 2
 ```

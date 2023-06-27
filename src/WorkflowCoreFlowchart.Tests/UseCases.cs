@@ -10,9 +10,9 @@ public class UseCases
     [TestMethod]
     public void GenerateAndRenderFlowchart()
     {
-        WhileWorkflow2 workflow1 = new();
+        GotoWorkflow4 workflow = new();
         WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
-        workflow1.Build(workflowBuilder);
+        workflow.Build(workflowBuilder);
         WorkflowDefinition definition = workflowBuilder.Build("0", 1);
         string printedDefinition = WorkflowDefinitionPrinter.Print(definition);
 
