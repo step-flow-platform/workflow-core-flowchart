@@ -16,6 +16,7 @@ public class FlowchartGenerator
 
     private void Process(WorkflowDefinition definition)
     {
+        Dictionary<string, string> replaceDirections = new();
         foreach (WorkflowStep step in definition.Steps)
         {
             switch (step)
@@ -29,10 +30,21 @@ public class FlowchartGenerator
                 case WorkflowStep<While>:
                     ProcessWhileStep(step);
                     break;
+                case WorkflowStep<Sequence>:
+                    ProcessSequence(step);
+                    break;
+                case WorkflowStep<InlineStepBody>:
+                    replaceDirections[step.Id.ToString()] = step.Outcomes.Single().NextStep.ToString();
+                    continue;
                 default:
                     ProcessStep(step);
                     break;
             }
+        }
+
+        foreach (NodesDirectionModel direction in _directions.Where(x => replaceDirections.ContainsKey(x.ToId)))
+        {
+            direction.ToId = replaceDirections[direction.ToId];
         }
     }
 
@@ -94,6 +106,30 @@ public class FlowchartGenerator
 
         foreach (int childId in step.Children)
         {
+            _directions.Add(new(step.Id.ToString(), childId.ToString(), null));
+        }
+    }
+
+    private void ProcessSequence(WorkflowStep step)
+    {
+        _nodes.Add(new NodeModel(step.Id.ToString(), "Parallel", NodeType.Hexagon));
+
+        string nextStep;
+        switch (step.Outcomes.Count)
+        {
+            case 0:
+                nextStep = _stack.Peek();
+                break;
+            case 1:
+                nextStep = step.Outcomes[0].NextStep.ToString();
+                break;
+            default:
+                throw new ApplicationException("Unexpected step outcomes");
+        }
+
+        foreach (int childId in step.Children)
+        {
+            _stack.Push(nextStep);
             _directions.Add(new(step.Id.ToString(), childId.ToString(), null));
         }
     }

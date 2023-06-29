@@ -1,7 +1,8 @@
 using WorkflowCore.Models;
 using WorkflowCore.Services;
+using WorkflowCoreFlowchart.Tests.TestWorkflows;
 
-namespace WorkflowCoreFlowchart.Tests.TestWorkflows;
+namespace WorkflowCoreFlowchart.Tests;
 
 [TestClass]
 public class IfWorkflowsTest : WorkflowTestBase

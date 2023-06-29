@@ -33,6 +33,9 @@ public class FlowchartRenderer
                 case NodeType.Subroutine:
                     builder.AppendLine($"{node.Id}[[{node.Text}]]");
                     break;
+                case NodeType.Hexagon:
+                    builder.AppendLine($"{node.Id}{{{{{node.Text}}}}}");
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }

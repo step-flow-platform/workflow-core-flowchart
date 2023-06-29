@@ -5,5 +5,6 @@ public enum NodeType
     Default,
     Rhombus,
     Circle,
-    Subroutine
+    Subroutine,
+    Hexagon
 }
