@@ -1,3 +1,4 @@
+using MermaidCharting.Model;
 using WorkflowCore.Models;
 using WorkflowCore.Services;
 using WorkflowCoreFlowchart.Tests.TestWorkflows;
@@ -17,9 +18,8 @@ public class UseCases
         string printedDefinition = WorkflowDefinitionPrinter.Print(definition);
 
         FlowchartGenerator generator = new();
-        FlowchartRenderer renderer = new();
         FlowchartModel flowchartModel = generator.Generate(definition);
-        string flowchart = renderer.Render(flowchartModel);
+        string flowchart = FlowchartRenderer.Render(flowchartModel);
 
         Assert.IsFalse(string.IsNullOrEmpty(printedDefinition));
         Assert.IsFalse(string.IsNullOrEmpty(flowchart));

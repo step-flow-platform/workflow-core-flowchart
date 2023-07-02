@@ -1,3 +1,4 @@
+using MermaidCharting.Model;
 using WorkflowCore.Models;
 using WorkflowCore.Services;
 using WorkflowCoreFlowchart.Tests.TestWorkflows;
@@ -19,6 +20,6 @@ public class LinearWorkflowsTest : WorkflowTestBase
         FlowchartModel flowchartModel = generator.Generate(definition);
 
         Assert.AreEqual(6, flowchartModel.Nodes.Count);
-        Assert.AreEqual(5, flowchartModel.Directions.Count);
+        Assert.AreEqual(5, flowchartModel.Links.Count);
     }
 }

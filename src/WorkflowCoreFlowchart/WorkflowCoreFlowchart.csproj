@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MermaidCharting" Version="0.0.3" />
     <PackageReference Include="WorkflowCore" Version="3.9.0" />
   </ItemGroup>
 

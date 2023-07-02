@@ -1,3 +1,4 @@
+using MermaidCharting.Model;
 using WorkflowCore.Models;
 using WorkflowCore.Services;
 using WorkflowCoreFlowchart.Tests.TestWorkflows;
@@ -19,12 +20,12 @@ public class GotoWorkflowsTest : WorkflowTestBase
         FlowchartModel flowchartModel = generator.Generate(definition);
 
         Assert.AreEqual(6, flowchartModel.Nodes.Count);
-        Assert.AreEqual(5, flowchartModel.Directions.Count);
-        AssertDirection(flowchartModel.Directions, "startNode", "0");
-        AssertDirection(flowchartModel.Directions, "0", "1");
-        AssertDirection(flowchartModel.Directions, "1", "3");
-        AssertDirection(flowchartModel.Directions, "2", "3");
-        AssertDirection(flowchartModel.Directions, "3", "4");
+        Assert.AreEqual(5, flowchartModel.Links.Count);
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "3");
+        AssertLink(flowchartModel.Links, "2", "3");
+        AssertLink(flowchartModel.Links, "3", "4");
     }
 
     [TestMethod]
@@ -39,14 +40,14 @@ public class GotoWorkflowsTest : WorkflowTestBase
         FlowchartModel flowchartModel = generator.Generate(definition);
 
         Assert.AreEqual(7, flowchartModel.Nodes.Count);
-        Assert.AreEqual(7, flowchartModel.Directions.Count);
-        AssertDirection(flowchartModel.Directions, "startNode", "0");
-        AssertDirection(flowchartModel.Directions, "0", "1");
-        AssertDirection(flowchartModel.Directions, "1", "2");
-        AssertDirection(flowchartModel.Directions, "1", "3");
-        AssertDirection(flowchartModel.Directions, "2", "4");
-        AssertDirection(flowchartModel.Directions, "3", "4");
-        AssertDirection(flowchartModel.Directions, "4", "5");
+        Assert.AreEqual(7, flowchartModel.Links.Count);
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "2");
+        AssertLink(flowchartModel.Links, "1", "3");
+        AssertLink(flowchartModel.Links, "2", "4");
+        AssertLink(flowchartModel.Links, "3", "4");
+        AssertLink(flowchartModel.Links, "4", "5");
     }
 
     [TestMethod]
@@ -61,18 +62,18 @@ public class GotoWorkflowsTest : WorkflowTestBase
         FlowchartModel flowchartModel = generator.Generate(definition);
 
         Assert.AreEqual(10, flowchartModel.Nodes.Count);
-        Assert.AreEqual(11, flowchartModel.Directions.Count);
-        AssertDirection(flowchartModel.Directions, "startNode", "0");
-        AssertDirection(flowchartModel.Directions, "0", "1");
-        AssertDirection(flowchartModel.Directions, "1", "2");
-        AssertDirection(flowchartModel.Directions, "1", "5");
-        AssertDirection(flowchartModel.Directions, "2", "3");
-        AssertDirection(flowchartModel.Directions, "3", "4");
-        AssertDirection(flowchartModel.Directions, "3", "5");
-        AssertDirection(flowchartModel.Directions, "4", "7");
-        AssertDirection(flowchartModel.Directions, "5", "6");
-        AssertDirection(flowchartModel.Directions, "6", "7");
-        AssertDirection(flowchartModel.Directions, "7", "8");
+        Assert.AreEqual(11, flowchartModel.Links.Count);
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "2");
+        AssertLink(flowchartModel.Links, "1", "5");
+        AssertLink(flowchartModel.Links, "2", "3");
+        AssertLink(flowchartModel.Links, "3", "4");
+        AssertLink(flowchartModel.Links, "3", "5");
+        AssertLink(flowchartModel.Links, "4", "7");
+        AssertLink(flowchartModel.Links, "5", "6");
+        AssertLink(flowchartModel.Links, "6", "7");
+        AssertLink(flowchartModel.Links, "7", "8");
     }
 
     [TestMethod]
@@ -87,18 +88,18 @@ public class GotoWorkflowsTest : WorkflowTestBase
         FlowchartModel flowchartModel = generator.Generate(definition);
 
         Assert.AreEqual(10, flowchartModel.Nodes.Count);
-        Assert.AreEqual(12, flowchartModel.Directions.Count);
-        AssertDirection(flowchartModel.Directions, "startNode", "0");
-        AssertDirection(flowchartModel.Directions, "0", "1");
-        AssertDirection(flowchartModel.Directions, "1", "2");
-        AssertDirection(flowchartModel.Directions, "1", "5");
-        AssertDirection(flowchartModel.Directions, "2", "3");
-        AssertDirection(flowchartModel.Directions, "3", "4");
-        AssertDirection(flowchartModel.Directions, "3", "5");
-        AssertDirection(flowchartModel.Directions, "4", "5");
-        AssertDirection(flowchartModel.Directions, "5", "6");
-        AssertDirection(flowchartModel.Directions, "6", "7");
-        AssertDirection(flowchartModel.Directions, "6", "8");
-        AssertDirection(flowchartModel.Directions, "7", "2");
+        Assert.AreEqual(12, flowchartModel.Links.Count);
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "2");
+        AssertLink(flowchartModel.Links, "1", "5");
+        AssertLink(flowchartModel.Links, "2", "3");
+        AssertLink(flowchartModel.Links, "3", "4");
+        AssertLink(flowchartModel.Links, "3", "5");
+        AssertLink(flowchartModel.Links, "4", "5");
+        AssertLink(flowchartModel.Links, "5", "6");
+        AssertLink(flowchartModel.Links, "6", "7");
+        AssertLink(flowchartModel.Links, "6", "8");
+        AssertLink(flowchartModel.Links, "7", "2");
     }
 }

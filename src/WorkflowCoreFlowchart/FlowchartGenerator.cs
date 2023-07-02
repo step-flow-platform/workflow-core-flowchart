@@ -1,5 +1,6 @@
 using System.Linq.Expressions;
 using System.Reflection;
+using MermaidCharting.Model;
 using WorkflowCore.Models;
 using WorkflowCore.Primitives;
 
@@ -11,18 +12,18 @@ public class FlowchartGenerator
     {
         Process(definition);
         AddStartNode();
-        return new FlowchartModel(_nodes, _directions);
+        return _flowchart;
     }
 
     private void Process(WorkflowDefinition definition)
     {
-        Dictionary<string, string> replaceDirections = new();
+        Dictionary<string, string> replaceLinks = new();
         foreach (WorkflowStep step in definition.Steps)
         {
             switch (step)
             {
                 case EndStep:
-                    _nodes.Add(new NodeModel(step.Id.ToString(), "End", NodeType.Circle));
+                    _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), "End", NodeType.Circle));
                     break;
                 case WorkflowStep<If>:
                     ProcessIfStep(step);
@@ -34,7 +35,7 @@ public class FlowchartGenerator
                     ProcessSequence(step);
                     break;
                 case WorkflowStep<InlineStepBody>:
-                    replaceDirections[step.Id.ToString()] = step.Outcomes.Single().NextStep.ToString();
+                    replaceLinks[step.Id.ToString()] = step.Outcomes.Single().NextStep.ToString();
                     continue;
                 default:
                     ProcessStep(step);
@@ -42,38 +43,38 @@ public class FlowchartGenerator
             }
         }
 
-        foreach (NodesDirectionModel direction in _directions.Where(x => replaceDirections.ContainsKey(x.ToId)))
+        foreach (LinkModel link in _flowchart.Links.Where(x => replaceLinks.ContainsKey(x.ToId)))
         {
-            direction.ToId = replaceDirections[direction.ToId];
+            link.ToId = replaceLinks[link.ToId];
         }
     }
 
     private void ProcessStep(WorkflowStep step)
     {
-        _nodes.Add(new NodeModel(step.Id.ToString(), step.Name, NodeType.Default));
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), step.Name));
 
         if (step.Outcomes.Count == 0)
         {
-            _directions.Add(new(step.Id.ToString(), _stack.Pop(), null));
+            _flowchart.Links.Add(new(step.Id.ToString(), _stack.Pop()));
         }
         else
         {
-            _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), null));
+            _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString()));
         }
     }
 
     private void ProcessIfStep(WorkflowStep step)
     {
         string condition = ExtractCondition(step);
-        _nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
 
         switch (step.Outcomes.Count)
         {
             case 0:
-                _directions.Add(new(step.Id.ToString(), _stack.Peek(), "false"));
+                _flowchart.Links.Add(new(step.Id.ToString(), _stack.Peek(), "false"));
                 break;
             case 1:
-                _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), "false"));
+                _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), "false"));
                 _stack.Push(step.Outcomes[0].NextStep.ToString());
                 break;
             default:
@@ -82,22 +83,22 @@ public class FlowchartGenerator
 
         foreach (int childId in step.Children)
         {
-            _directions.Add(new(step.Id.ToString(), childId.ToString(), "true"));
+            _flowchart.Links.Add(new(step.Id.ToString(), childId.ToString(), "true"));
         }
     }
 
     private void ProcessWhileStep(WorkflowStep step)
     {
         string condition = ExtractCondition(step);
-        _nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
 
         switch (step.Outcomes.Count)
         {
             case 0:
-                _directions.Add(new(step.Id.ToString(), _stack.Peek(), null));
+                _flowchart.Links.Add(new(step.Id.ToString(), _stack.Peek()));
                 break;
             case 1:
-                _directions.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), null));
+                _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString()));
                 _stack.Push(step.Id.ToString());
                 break;
             default:
@@ -106,13 +107,13 @@ public class FlowchartGenerator
 
         foreach (int childId in step.Children)
         {
-            _directions.Add(new(step.Id.ToString(), childId.ToString(), null));
+            _flowchart.Links.Add(new(step.Id.ToString(), childId.ToString()));
         }
     }
 
     private void ProcessSequence(WorkflowStep step)
     {
-        _nodes.Add(new NodeModel(step.Id.ToString(), "Parallel", NodeType.Hexagon));
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), "Parallel", NodeType.Hexagon));
 
         string nextStep;
         switch (step.Outcomes.Count)
@@ -130,7 +131,7 @@ public class FlowchartGenerator
         foreach (int childId in step.Children)
         {
             _stack.Push(nextStep);
-            _directions.Add(new(step.Id.ToString(), childId.ToString(), null));
+            _flowchart.Links.Add(new(step.Id.ToString(), childId.ToString()));
         }
     }
 
@@ -144,17 +145,16 @@ public class FlowchartGenerator
 
     private void AddStartNode()
     {
-        NodeModel? firstNode = _nodes.FirstOrDefault();
+        NodeModel? firstNode = _flowchart.Nodes.FirstOrDefault();
         NodeModel startNode = new NodeModel("startNode", "Start", NodeType.Circle);
-        _nodes.Insert(0, startNode);
+        _flowchart.Nodes.Insert(0, startNode);
         if (firstNode is not null)
         {
-            NodesDirectionModel direction = new(startNode.Id, firstNode.Id, null);
-            _directions.Insert(0, direction);
+            LinkModel link = new(startNode.Id, firstNode.Id);
+            _flowchart.Links.Insert(0, link);
         }
     }
 
-    private readonly List<NodeModel> _nodes = new();
-    private readonly List<NodesDirectionModel> _directions = new();
-    private Stack<string> _stack = new();
+    private readonly FlowchartModel _flowchart = new();
+    private readonly Stack<string> _stack = new();
 }

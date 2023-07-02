@@ -1,10 +1,12 @@
+using MermaidCharting.Model;
+
 namespace WorkflowCoreFlowchart.Tests;
 
 public abstract class WorkflowTestBase
 {
-    protected void AssertDirection(List<NodesDirectionModel> directions, string from, string to)
+    protected void AssertLink(List<LinkModel> links, string from, string to)
     {
-        int count = directions.Count(x => x.FromId == from && x.ToId == to);
+        int count = links.Count(x => x.FromId == from && x.ToId == to);
         Assert.AreEqual(1, count);
     }
 }
