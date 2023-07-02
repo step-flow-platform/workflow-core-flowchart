@@ -21,6 +21,7 @@ public class IfWorkflowsTest : WorkflowTestBase
 
         Assert.AreEqual(8, flowchartModel.Nodes.Count);
         Assert.AreEqual(8, flowchartModel.Links.Count);
+        AssertNode(flowchartModel.Nodes, "2", @"""(data.Param1 > 12)""", NodeType.Rhombus);
     }
 
     [TestMethod]
@@ -36,6 +37,9 @@ public class IfWorkflowsTest : WorkflowTestBase
 
         Assert.AreEqual(12, flowchartModel.Nodes.Count);
         Assert.AreEqual(14, flowchartModel.Links.Count);
+        AssertNode(flowchartModel.Nodes, "2", @"""(data.Param1 > 12)""", NodeType.Rhombus);
+        AssertNode(flowchartModel.Nodes, "4", @"""(data.Param1 > 16)""", NodeType.Rhombus);
+        AssertNode(flowchartModel.Nodes, "7", @"""(data.Param1 < 18)""", NodeType.Rhombus);
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
         AssertLink(flowchartModel.Links, "1", "2");
@@ -65,6 +69,8 @@ public class IfWorkflowsTest : WorkflowTestBase
 
         Assert.AreEqual(12, flowchartModel.Nodes.Count);
         Assert.AreEqual(13, flowchartModel.Links.Count);
+        AssertNode(flowchartModel.Nodes, "2", @"""(data.Param1 > 12)""", NodeType.Rhombus);
+        AssertNode(flowchartModel.Nodes, "4", @"""(data.Param1 > 16)""", NodeType.Rhombus);
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
         AssertLink(flowchartModel.Links, "1", "2");

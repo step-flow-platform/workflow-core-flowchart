@@ -11,12 +11,12 @@ public class IfWorkflow : IWorkflow<WorkflowData>
     public void Build(IWorkflowBuilder<WorkflowData> builder)
     {
         builder
-            .StartWith<StepA>()
-            .Then<StepB>()
-            .If(data => data.Param1 > 12).Do(_ => _
-                .StartWith<StepA>()
-                .Then<StepC>())
-            .Then<StepB>()
-            .EndWorkflow();
+            .StartWith<StepA>() // 0
+            .Then<StepB>() // 1
+            .If(data => data.Param1 > 12).Do(_ => _ // 2
+                .StartWith<StepA>() // 3
+                .Then<StepC>()) // 4
+            .Then<StepB>() // 5
+            .EndWorkflow(); // 6
     }
 }

@@ -51,7 +51,8 @@ public class FlowchartGenerator
 
     private void ProcessStep(WorkflowStep step)
     {
-        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), step.Name));
+        string text = GetNodeText(step);
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), text));
 
         if (step.Outcomes.Count == 0)
         {
@@ -65,8 +66,8 @@ public class FlowchartGenerator
 
     private void ProcessIfStep(WorkflowStep step)
     {
-        string condition = ExtractCondition(step);
-        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
+        string text = GetNodeText(step);
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), text, NodeType.Rhombus));
 
         switch (step.Outcomes.Count)
         {
@@ -89,8 +90,8 @@ public class FlowchartGenerator
 
     private void ProcessWhileStep(WorkflowStep step)
     {
-        string condition = ExtractCondition(step);
-        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), condition, NodeType.Rhombus));
+        string text = GetNodeText(step);
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), text, NodeType.Rhombus));
 
         switch (step.Outcomes.Count)
         {
@@ -135,12 +136,22 @@ public class FlowchartGenerator
         }
     }
 
-    private string ExtractCondition(WorkflowStep step)
+    private string GetNodeText(WorkflowStep step)
     {
-        Type type = typeof(MemberMapParameter);
-        FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
-        LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
-        return $"\"{value?.Body.ToString() ?? "-"}\"";
+        if (!string.IsNullOrEmpty(step.Name))
+        {
+            return step.Name;
+        }
+
+        if (step.Inputs.Count > 0)
+        {
+            Type type = typeof(MemberMapParameter);
+            FieldInfo? field = type.GetField("_target", BindingFlags.NonPublic | BindingFlags.Instance);
+            LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
+            return $"\"{value?.Body.ToString() ?? "-/-"}\"";
+        }
+
+        return "---";
     }
 
     private void AddStartNode()
