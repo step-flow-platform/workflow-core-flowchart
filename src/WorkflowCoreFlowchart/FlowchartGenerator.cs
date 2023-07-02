@@ -146,7 +146,7 @@ public class FlowchartGenerator
         if (step.Inputs.Count > 0)
         {
             Type type = typeof(MemberMapParameter);
-            FieldInfo? field = type.GetField("_target", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
             LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
             return $"\"{value?.Body.ToString() ?? "-/-"}\"";
         }
