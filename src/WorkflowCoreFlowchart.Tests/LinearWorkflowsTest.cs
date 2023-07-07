@@ -50,7 +50,7 @@ public class LinearWorkflowsTest : WorkflowTestBase
         AssertNode(flowchartModel.Nodes, "startNode", "Start", NodeType.Circle);
         AssertNode(flowchartModel.Nodes, "0", "StepA", NodeType.Default);
         AssertNode(flowchartModel.Nodes, "1", "StepB", NodeType.Default);
-        AssertNode(flowchartModel.Nodes, "2", @"""((WorkflowData)context.Workflow.Data).Param1 = 42)""", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "2", "DoSomething", NodeType.Default);
         AssertNode(flowchartModel.Nodes, "3", "StepC", NodeType.Default);
         AssertNode(flowchartModel.Nodes, "4", "End", NodeType.Circle);
         AssertLink(flowchartModel.Links, "startNode", "0");

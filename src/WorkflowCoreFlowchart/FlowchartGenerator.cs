@@ -17,7 +17,6 @@ public class FlowchartGenerator
 
     private void Process(WorkflowDefinition definition)
     {
-        Dictionary<string, string> replaceLinks = new();
         foreach (WorkflowStep step in definition.Steps)
         {
             switch (step)
@@ -34,8 +33,8 @@ public class FlowchartGenerator
                 case WorkflowStep<Sequence>:
                     ProcessSequence(step);
                     break;
-                case WorkflowStep<InlineStepBody>:
-                    replaceLinks[step.Id.ToString()] = step.Outcomes.Single().NextStep.ToString();
+                case WorkflowStepInline inlineStep:
+                    ProcessInlineStepBody(inlineStep);
                     continue;
                 default:
                     ProcessStep(step);
@@ -43,15 +42,15 @@ public class FlowchartGenerator
             }
         }
 
-        foreach (LinkModel link in _flowchart.Links.Where(x => replaceLinks.ContainsKey(x.ToId)))
+        foreach (LinkModel link in _flowchart.Links.Where(x => _replaceLinks.ContainsKey(x.ToId)))
         {
-            link.ToId = replaceLinks[link.ToId];
+            link.ToId = _replaceLinks[link.ToId];
         }
     }
 
-    private void ProcessStep(WorkflowStep step)
+    private void ProcessStep(WorkflowStep step, string? stepText = null)
     {
-        string text = GetNodeText(step);
+        string text = stepText ?? GetNodeText(step);
         _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), text));
 
         if (step.Outcomes.Count == 0)
@@ -136,6 +135,19 @@ public class FlowchartGenerator
         }
     }
 
+    private void ProcessInlineStepBody(WorkflowStepInline step)
+    {
+        if (step.Body.Method.Module.Name is "WorkflowCore.dll")
+        {
+            _replaceLinks[step.Id.ToString()] = step.Outcomes.Single().NextStep.ToString();
+        }
+        else
+        {
+            string text = step.Body.Method.Name;
+            ProcessStep(step, text);
+        }
+    }
+
     private string GetNodeText(WorkflowStep step)
     {
         if (!string.IsNullOrEmpty(step.Name))
@@ -168,4 +180,5 @@ public class FlowchartGenerator
 
     private readonly FlowchartModel _flowchart = new();
     private readonly Stack<string> _stack = new();
+    private readonly Dictionary<string, string> _replaceLinks = new();
 }
