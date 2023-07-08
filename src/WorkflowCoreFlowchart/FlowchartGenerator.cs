@@ -92,18 +92,19 @@ public class FlowchartGenerator
         string text = GetNodeText(step);
         _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), text, NodeType.Rhombus));
 
-        switch (step.Outcomes.Count)
+        if (step.Outcomes.Count == 1)
         {
-            case 0:
-                _flowchart.Links.Add(new(step.Id.ToString(), _stack.Peek()));
-                break;
-            case 1:
-                _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString()));
-                _stack.Push(step.Id.ToString());
-                break;
-            default:
-                throw new ApplicationException("Unexpected step outcomes");
+            _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString()));
         }
+        else
+        {
+            if (_stack.TryPeek(out string? toId))
+            {
+                _flowchart.Links.Add(new(step.Id.ToString(), toId));
+            }
+        }
+
+        _stack.Push(step.Id.ToString());
 
         foreach (int childId in step.Children)
         {

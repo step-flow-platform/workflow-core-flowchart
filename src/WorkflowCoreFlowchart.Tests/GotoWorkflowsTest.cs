@@ -102,4 +102,25 @@ public class GotoWorkflowsTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "6", "8");
         AssertLink(flowchartModel.Links, "7", "2");
     }
+
+    [TestMethod]
+    public void GenerateFlowchartForGotoWorkflowWithoutEndStep()
+    {
+        GotoWorkflowWithoutEndStep workflow = new();
+        WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
+        workflow.Build(workflowBuilder);
+        WorkflowDefinition definition = workflowBuilder.Build("GotoWorkflowWithoutEndStep", 1);
+
+        FlowchartGenerator generator = new();
+        FlowchartModel flowchartModel = generator.Generate(definition);
+
+        Assert.AreEqual(5, flowchartModel.Nodes.Count);
+        Assert.AreEqual(6, flowchartModel.Links.Count);
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "2");
+        AssertLink(flowchartModel.Links, "2", "3");
+        AssertLink(flowchartModel.Links, "2", "1");
+        AssertLink(flowchartModel.Links, "3", "0");
+    }
 }
