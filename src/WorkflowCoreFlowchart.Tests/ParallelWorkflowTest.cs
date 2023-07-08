@@ -47,8 +47,8 @@ public class ParallelWorkflowTest : WorkflowTestBase
         Assert.AreEqual(9, flowchartModel.Links.Count);
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
-        AssertLink(flowchartModel.Links, "1", "3");
-        AssertLink(flowchartModel.Links, "1", "6");
+        AssertLink(flowchartModel.Links, "1", "3", "true");
+        AssertLink(flowchartModel.Links, "1", "6", "false");
         AssertLink(flowchartModel.Links, "3", "4");
         AssertLink(flowchartModel.Links, "3", "5");
         AssertLink(flowchartModel.Links, "4", "6");

@@ -11,9 +11,10 @@ public abstract class WorkflowTestBase
         Assert.AreEqual(expectedType, node.Type);
     }
 
-    protected void AssertLink(List<LinkModel> links, string from, string to)
+    protected void AssertLink(List<LinkModel> links, string from, string to, string? title = null)
     {
-        int count = links.Count(x => x.FromId == from && x.ToId == to);
-        Assert.AreEqual(1, count);
+        LinkModel? link = links.SingleOrDefault(x => x.FromId == from && x.ToId == to);
+        Assert.IsNotNull(link);
+        Assert.AreEqual(title, link.Title);
     }
 }

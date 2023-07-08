@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 using MermaidCharting.Model;
+using WorkflowCore.Interface;
 using WorkflowCore.Models;
 using WorkflowCore.Primitives;
 
@@ -30,6 +31,12 @@ public class FlowchartGenerator
                 case WorkflowStep<While>:
                     ProcessWhileStep(step);
                     break;
+                case WorkflowStep<OutcomeSwitch>:
+                    ProcessSwitchStep(step);
+                    break;
+                case WorkflowStep<When>:
+                    ProcessWhenStep(step);
+                    break;
                 case WorkflowStep<Sequence>:
                     ProcessSequence(step);
                     break;
@@ -44,7 +51,12 @@ public class FlowchartGenerator
 
         foreach (LinkModel link in _flowchart.Links.Where(x => _replaceLinks.ContainsKey(x.ToId)))
         {
-            link.ToId = _replaceLinks[link.ToId];
+            Tuple<string, string?> values = _replaceLinks[link.ToId];
+            link.ToId = values.Item1;
+            if (values.Item2 is not null)
+            {
+                link.Title = values.Item2;
+            }
         }
     }
 
@@ -112,6 +124,36 @@ public class FlowchartGenerator
         }
     }
 
+    private void ProcessSwitchStep(WorkflowStep step)
+    {
+        _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), "Switch", NodeType.Rhombus));
+
+        string nextStep;
+        switch (step.Outcomes.Count)
+        {
+            case 0:
+                nextStep = _stack.Peek();
+                break;
+            case 1:
+                nextStep = step.Outcomes[0].NextStep.ToString();
+                break;
+            default:
+                throw new ApplicationException("Unexpected step outcomes");
+        }
+
+        foreach (int childId in step.Children)
+        {
+            _stack.Push(nextStep);
+            _flowchart.Links.Add(new(step.Id.ToString(), childId.ToString()));
+        }
+    }
+
+    private void ProcessWhenStep(WorkflowStep step)
+    {
+        string linkText = ExtractInputText(step.Inputs[0]);
+        _replaceLinks[step.Id.ToString()] = new(step.Children.Single().ToString(), linkText);
+    }
+
     private void ProcessSequence(WorkflowStep step)
     {
         _flowchart.Nodes.Add(new NodeModel(step.Id.ToString(), "Parallel", NodeType.Hexagon));
@@ -140,7 +182,7 @@ public class FlowchartGenerator
     {
         if (step.Body.Method.Module.Name is "WorkflowCore.dll")
         {
-            _replaceLinks[step.Id.ToString()] = step.Outcomes.Single().NextStep.ToString();
+            _replaceLinks[step.Id.ToString()] = new(step.Outcomes.Single().NextStep.ToString(), null);
         }
         else
         {
@@ -163,13 +205,23 @@ public class FlowchartGenerator
 
         if (step.Inputs.Count > 0)
         {
-            Type type = typeof(MemberMapParameter);
-            FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
-            LambdaExpression? value = field?.GetValue(step.Inputs[0]) as LambdaExpression;
-            return $"\"{value?.Body.ToString() ?? "-/-"}\"";
+            return ExtractInputText(step.Inputs[0]);
         }
 
         return "---";
+    }
+
+    private string ExtractInputText(IStepParameter input)
+    {
+        Type type = typeof(MemberMapParameter);
+        FieldInfo? field = type.GetField("_source", BindingFlags.NonPublic | BindingFlags.Instance);
+        LambdaExpression? value = field?.GetValue(input) as LambdaExpression;
+        if (value?.Body is UnaryExpression unaryExpression)
+        {
+            return unaryExpression.Operand.ToString();
+        }
+
+        return $"\"{value?.Body?.ToString() ?? "-/-"}\"";
     }
 
     private void AddStartNode()
@@ -186,5 +238,5 @@ public class FlowchartGenerator
 
     private readonly FlowchartModel _flowchart = new();
     private readonly Stack<string> _stack = new();
-    private readonly Dictionary<string, string> _replaceLinks = new();
+    private readonly Dictionary<string, Tuple<string, string?>> _replaceLinks = new();
 }
