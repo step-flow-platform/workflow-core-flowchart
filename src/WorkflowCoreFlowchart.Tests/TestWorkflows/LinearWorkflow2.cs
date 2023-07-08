@@ -16,7 +16,9 @@ public class LinearWorkflow2 : IWorkflow<WorkflowData>
             .Then<StepB>() // 1
             .Then(DoSomething) // 2
             .Then<StepC>() // 3
-            .EndWorkflow(); // 4
+            .Then(context => ((WorkflowData)context.Workflow.Data).Param1 = 21).Id("SomeStep") // 4
+            .Then<StepA>().Id("Description for step") // 5
+            .EndWorkflow(); // 6
     }
 
     private ExecutionResult DoSomething(IStepExecutionContext context)

@@ -151,6 +151,11 @@ public class FlowchartGenerator
 
     private string GetNodeText(WorkflowStep step)
     {
+        if (!string.IsNullOrEmpty(step.ExternalId))
+        {
+            return step.ExternalId;
+        }
+
         if (!string.IsNullOrEmpty(step.Name))
         {
             return step.Name;
