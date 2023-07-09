@@ -111,4 +111,38 @@ public class SwitchWorkflowTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "3", "6", "Default");
         AssertLink(flowchartModel.Links, "5", "6");
     }
+
+    [TestMethod]
+    public void GenerateFlowchartForSwitchWorkflowWithWhenStartWithThen()
+    {
+        SwitchWorkflowWithWhenStartWithThen workflow = new();
+        WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
+        workflow.Build(workflowBuilder);
+        WorkflowDefinition definition =
+            workflowBuilder.Build("GenerateFlowchartForSwitchWorkflowWithWhenStartWithThen", 1);
+
+        FlowchartGenerator generator = new();
+        FlowchartModel flowchartModel = generator.Generate(definition);
+
+        Assert.AreEqual(8, flowchartModel.Nodes.Count);
+        Assert.AreEqual(8, flowchartModel.Links.Count);
+
+        AssertNode(flowchartModel.Nodes, "startNode", "Start", NodeType.Circle);
+        AssertNode(flowchartModel.Nodes, "0", "StepA", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "1", "Switch", NodeType.Rhombus);
+        AssertNode(flowchartModel.Nodes, "4", "StepA", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "5", "StepA", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "6", "StepB", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "7", "Label", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "8", "End", NodeType.Circle);
+
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "4", "False");
+        AssertLink(flowchartModel.Links, "1", "5", "Default");
+        AssertLink(flowchartModel.Links, "4", "7");
+        AssertLink(flowchartModel.Links, "5", "6");
+        AssertLink(flowchartModel.Links, "6", "7");
+        AssertLink(flowchartModel.Links, "7", "8");
+    }
 }

@@ -49,15 +49,7 @@ public class FlowchartGenerator
             }
         }
 
-        foreach (LinkModel link in _flowchart.Links.Where(x => _replaceLinks.ContainsKey(x.ToId)))
-        {
-            Tuple<string, string?> values = _replaceLinks[link.ToId];
-            link.ToId = values.Item1;
-            if (values.Item2 is not null)
-            {
-                link.Title = values.Item2;
-            }
-        }
+        ProcessReplaceLinks();
     }
 
     private void ProcessStep(WorkflowStep step, string? stepText = null)
@@ -224,6 +216,31 @@ public class FlowchartGenerator
         }
 
         return $"\"{value?.Body?.ToString() ?? "-/-"}\"";
+    }
+
+    private void ProcessReplaceLinks()
+    {
+        foreach (LinkModel link in _flowchart.Links.Where(x => _replaceLinks.ContainsKey(x.ToId)))
+        {
+            Tuple<string, string?> values = FindLinkToReplace(link.ToId);
+            link.ToId = values.Item1;
+            if (values.Item2 is not null)
+            {
+                link.Title = values.Item2;
+            }
+        }
+    }
+
+    private Tuple<string, string?> FindLinkToReplace(string id)
+    {
+        Tuple<string, string?> result = _replaceLinks[id];
+        while (_replaceLinks.ContainsKey(result.Item1))
+        {
+            Tuple<string, string?> newResult = _replaceLinks[result.Item1];
+            result = newResult.Item2 is null ? new Tuple<string, string?>(newResult.Item1, result.Item2) : newResult;
+        }
+
+        return result;
     }
 
     private void AddStartNode()
