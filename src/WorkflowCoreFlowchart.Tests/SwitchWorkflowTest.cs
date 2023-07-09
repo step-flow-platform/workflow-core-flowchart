@@ -20,7 +20,7 @@ public class SwitchWorkflowTest : WorkflowTestBase
         FlowchartModel flowchartModel = generator.Generate(definition);
 
         Assert.AreEqual(10, flowchartModel.Nodes.Count);
-        Assert.AreEqual(11, flowchartModel.Links.Count);
+        Assert.AreEqual(12, flowchartModel.Links.Count);
 
         AssertNode(flowchartModel.Nodes, "startNode", "Start", NodeType.Circle);
         AssertNode(flowchartModel.Nodes, "0", "StepA", NodeType.Default);
@@ -35,6 +35,7 @@ public class SwitchWorkflowTest : WorkflowTestBase
 
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "11", "Default");
         AssertLink(flowchartModel.Links, "1", "3", "42");
         AssertLink(flowchartModel.Links, "1", "5", "21");
         AssertLink(flowchartModel.Links, "1", "8", "101");
@@ -44,5 +45,38 @@ public class SwitchWorkflowTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "8", "9");
         AssertLink(flowchartModel.Links, "9", "10");
         AssertLink(flowchartModel.Links, "10", "11");
+    }
+
+    [TestMethod]
+    public void GenerateFlowchartForSwitchWorkflowWithGoto()
+    {
+        SwitchWorkflowWithGoto workflow = new();
+        WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
+        workflow.Build(workflowBuilder);
+        WorkflowDefinition definition = workflowBuilder.Build("SwitchWorkflowWithGoto", 1);
+
+        FlowchartGenerator generator = new();
+        FlowchartModel flowchartModel = generator.Generate(definition);
+
+        Assert.AreEqual(8, flowchartModel.Nodes.Count);
+        Assert.AreEqual(8, flowchartModel.Links.Count);
+
+        AssertNode(flowchartModel.Nodes, "startNode", "Start", NodeType.Circle);
+        AssertNode(flowchartModel.Nodes, "0", "StepA", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "1", "Switch", NodeType.Rhombus);
+        AssertNode(flowchartModel.Nodes, "3", "StepA", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "4", "StepA", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "5", "StepB", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "6", "Label", NodeType.Default);
+        AssertNode(flowchartModel.Nodes, "7", "End", NodeType.Circle);
+
+        AssertLink(flowchartModel.Links, "startNode", "0");
+        AssertLink(flowchartModel.Links, "0", "1");
+        AssertLink(flowchartModel.Links, "1", "3", "False");
+        AssertLink(flowchartModel.Links, "1", "4", "Default");
+        AssertLink(flowchartModel.Links, "3", "6");
+        AssertLink(flowchartModel.Links, "4", "5");
+        AssertLink(flowchartModel.Links, "5", "6");
+        AssertLink(flowchartModel.Links, "6", "7");
     }
 }

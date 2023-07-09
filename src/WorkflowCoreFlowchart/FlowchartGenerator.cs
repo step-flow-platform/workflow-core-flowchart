@@ -141,6 +141,8 @@ public class FlowchartGenerator
                 throw new ApplicationException("Unexpected step outcomes");
         }
 
+        _flowchart.Links.Add(new(step.Id.ToString(), nextStep, "Default"));
+
         foreach (int childId in step.Children)
         {
             _stack.Push(nextStep);

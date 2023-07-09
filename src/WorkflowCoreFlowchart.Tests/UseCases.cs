@@ -11,7 +11,7 @@ public class UseCases
     [TestMethod]
     public void GenerateAndRenderFlowchart()
     {
-        SwitchWorkflow1 workflow = new();
+        SwitchWorkflowWithGoto workflow = new();
         WorkflowBuilder<WorkflowData> workflowBuilder = new(Array.Empty<WorkflowStep>());
         workflow.Build(workflowBuilder);
         WorkflowDefinition definition = workflowBuilder.Build("0", 1);
