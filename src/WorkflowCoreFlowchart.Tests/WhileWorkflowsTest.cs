@@ -49,8 +49,8 @@ public class WhileWorkflowsTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "1", "6");
         AssertLink(flowchartModel.Links, "2", "3");
         AssertLink(flowchartModel.Links, "3", "4");
-        AssertLink(flowchartModel.Links, "4", "5", "true");
-        AssertLink(flowchartModel.Links, "4", "1", "false");
+        AssertLink(flowchartModel.Links, "4", "5", "True");
+        AssertLink(flowchartModel.Links, "4", "1", "False");
         AssertLink(flowchartModel.Links, "5", "1");
     }
 

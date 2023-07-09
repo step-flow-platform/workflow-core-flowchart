@@ -43,8 +43,8 @@ public class GotoWorkflowsTest : WorkflowTestBase
         Assert.AreEqual(7, flowchartModel.Links.Count);
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
-        AssertLink(flowchartModel.Links, "1", "2", "true");
-        AssertLink(flowchartModel.Links, "1", "3", "false");
+        AssertLink(flowchartModel.Links, "1", "2", "True");
+        AssertLink(flowchartModel.Links, "1", "3", "False");
         AssertLink(flowchartModel.Links, "2", "4");
         AssertLink(flowchartModel.Links, "3", "4");
         AssertLink(flowchartModel.Links, "4", "5");
@@ -65,11 +65,11 @@ public class GotoWorkflowsTest : WorkflowTestBase
         Assert.AreEqual(11, flowchartModel.Links.Count);
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
-        AssertLink(flowchartModel.Links, "1", "2", "true");
-        AssertLink(flowchartModel.Links, "1", "5", "false");
+        AssertLink(flowchartModel.Links, "1", "2", "True");
+        AssertLink(flowchartModel.Links, "1", "5", "False");
         AssertLink(flowchartModel.Links, "2", "3");
-        AssertLink(flowchartModel.Links, "3", "4", "true");
-        AssertLink(flowchartModel.Links, "3", "5", "false");
+        AssertLink(flowchartModel.Links, "3", "4", "True");
+        AssertLink(flowchartModel.Links, "3", "5", "False");
         AssertLink(flowchartModel.Links, "4", "7");
         AssertLink(flowchartModel.Links, "5", "6");
         AssertLink(flowchartModel.Links, "6", "7");
@@ -91,15 +91,15 @@ public class GotoWorkflowsTest : WorkflowTestBase
         Assert.AreEqual(12, flowchartModel.Links.Count);
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
-        AssertLink(flowchartModel.Links, "1", "2", "true");
-        AssertLink(flowchartModel.Links, "1", "5", "false");
+        AssertLink(flowchartModel.Links, "1", "2", "True");
+        AssertLink(flowchartModel.Links, "1", "5", "False");
         AssertLink(flowchartModel.Links, "2", "3");
-        AssertLink(flowchartModel.Links, "3", "4", "true");
-        AssertLink(flowchartModel.Links, "3", "5", "false");
+        AssertLink(flowchartModel.Links, "3", "4", "True");
+        AssertLink(flowchartModel.Links, "3", "5", "False");
         AssertLink(flowchartModel.Links, "4", "5");
         AssertLink(flowchartModel.Links, "5", "6");
-        AssertLink(flowchartModel.Links, "6", "7", "true");
-        AssertLink(flowchartModel.Links, "6", "8", "false");
+        AssertLink(flowchartModel.Links, "6", "7", "True");
+        AssertLink(flowchartModel.Links, "6", "8", "False");
         AssertLink(flowchartModel.Links, "7", "2");
     }
 
@@ -119,8 +119,8 @@ public class GotoWorkflowsTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
         AssertLink(flowchartModel.Links, "1", "2");
-        AssertLink(flowchartModel.Links, "2", "3", "true");
-        AssertLink(flowchartModel.Links, "2", "1", "false");
+        AssertLink(flowchartModel.Links, "2", "3", "True");
+        AssertLink(flowchartModel.Links, "2", "1", "False");
         AssertLink(flowchartModel.Links, "3", "0");
     }
 }

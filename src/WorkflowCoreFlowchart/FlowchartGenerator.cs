@@ -83,10 +83,10 @@ public class FlowchartGenerator
         switch (step.Outcomes.Count)
         {
             case 0:
-                _flowchart.Links.Add(new(step.Id.ToString(), _stack.Peek(), "false"));
+                _flowchart.Links.Add(new(step.Id.ToString(), _stack.Peek(), "False"));
                 break;
             case 1:
-                _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), "false"));
+                _flowchart.Links.Add(new(step.Id.ToString(), step.Outcomes[0].NextStep.ToString(), "False"));
                 _stack.Push(step.Outcomes[0].NextStep.ToString());
                 break;
             default:
@@ -95,7 +95,7 @@ public class FlowchartGenerator
 
         foreach (int childId in step.Children)
         {
-            _flowchart.Links.Add(new(step.Id.ToString(), childId.ToString(), "true"));
+            _flowchart.Links.Add(new(step.Id.ToString(), childId.ToString(), "True"));
         }
     }
 

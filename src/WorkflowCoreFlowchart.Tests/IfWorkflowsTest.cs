@@ -43,17 +43,17 @@ public class IfWorkflowsTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
         AssertLink(flowchartModel.Links, "1", "2");
-        AssertLink(flowchartModel.Links, "2", "3", "true");
+        AssertLink(flowchartModel.Links, "2", "3", "True");
         AssertLink(flowchartModel.Links, "3", "4");
-        AssertLink(flowchartModel.Links, "4", "5", "true");
+        AssertLink(flowchartModel.Links, "4", "5", "True");
         AssertLink(flowchartModel.Links, "5", "6");
         AssertLink(flowchartModel.Links, "6", "7");
-        AssertLink(flowchartModel.Links, "7", "8", "true");
+        AssertLink(flowchartModel.Links, "7", "8", "True");
         AssertLink(flowchartModel.Links, "8", "9");
         AssertLink(flowchartModel.Links, "9", "10");
-        AssertLink(flowchartModel.Links, "2", "9", "false");
-        AssertLink(flowchartModel.Links, "4", "9", "false");
-        AssertLink(flowchartModel.Links, "7", "9", "false");
+        AssertLink(flowchartModel.Links, "2", "9", "False");
+        AssertLink(flowchartModel.Links, "4", "9", "False");
+        AssertLink(flowchartModel.Links, "7", "9", "False");
     }
 
     [TestMethod]
@@ -74,15 +74,15 @@ public class IfWorkflowsTest : WorkflowTestBase
         AssertLink(flowchartModel.Links, "startNode", "0");
         AssertLink(flowchartModel.Links, "0", "1");
         AssertLink(flowchartModel.Links, "1", "2");
-        AssertLink(flowchartModel.Links, "2", "3", "true");
+        AssertLink(flowchartModel.Links, "2", "3", "True");
         AssertLink(flowchartModel.Links, "3", "4");
-        AssertLink(flowchartModel.Links, "4", "5", "true");
+        AssertLink(flowchartModel.Links, "4", "5", "True");
         AssertLink(flowchartModel.Links, "5", "6");
         AssertLink(flowchartModel.Links, "6", "7");
         AssertLink(flowchartModel.Links, "7", "8");
         AssertLink(flowchartModel.Links, "8", "9");
         AssertLink(flowchartModel.Links, "9", "10");
-        AssertLink(flowchartModel.Links, "2", "9", "false");
-        AssertLink(flowchartModel.Links, "4", "7", "false");
+        AssertLink(flowchartModel.Links, "2", "9", "False");
+        AssertLink(flowchartModel.Links, "4", "7", "False");
     }
 }
